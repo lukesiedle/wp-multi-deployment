@@ -1,13 +1,13 @@
 <div class="wrap">
-<div id="icon-options-general" class="icon32"><br></div><h2>Rapid Deployment Configuration</h2>
+<div id="icon-options-general" class="icon32"><br></div><h2>Multi Deployment Configuration</h2>
 
 <form action="<?php _e( self :: $form_action ) ?>" method="post">
 
-<?php wp_nonce_field( 'save_settings', '_rapid_deployment_nonce' ) ?>
+<?php wp_nonce_field( 'save_settings', '_multi_deployment_nonce' ) ?>
 
 <h3>Set Environments</h3>
 <p>Set the host name expect to be found in your local, staging, or production environments. This is tested at the beginning of the script.
-	If the environment has changed, the home option and permalinks will be reset based on the new environment.</p>
+	If the environment has changed, the siteurl and permalinks will be reset based on the new environment and the accompanying configuration.</p>
 
 	<table class="form-table">
 		
@@ -15,7 +15,7 @@
 			
 			<tr>
 	        	<td><label>Current environment</label></td>
-	        	<td><?php _e( self :: $current ) ?></td>
+	        	<td><strong><?php _e( self :: $current ) ?></strong></td>
 	        </tr>
 
 	        <tr>

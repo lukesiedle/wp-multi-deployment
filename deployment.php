@@ -16,19 +16,22 @@
 	 *	@since 1.0
 	 */
 	 class Multi_Deployment {
-
+	 	
 	 	public static 
 	 		$current, 
 	 		$hostnames,
 	 		$http_paths,
 	 		$save_options,
-	 		$form_action = 'options-general.php?page=rapid-deploy-settings';
+	 		$form_action = 'options-general.php?page=multi-deploy-settings';
 
 	 	static function init(){
 
 	 		// Hooks //
 			add_action('admin_menu', array('Multi_Deployment', 'add_options_page'));
 			add_action('admin_notices', array('Multi_Deployment', 'save_options_notice'));
+			add_action('admin_notices', array('Multi_Deployment', 'installed_notice'));
+
+			register_deactivation_hook( __FILE__, array('Multi_Deployment', 'on_uninstall'));
 
 			self :: init_options();
 	 		self :: get_options();
@@ -104,18 +107,18 @@
 
 	 	static function add_options_page(){
 	 		add_options_page( 
-	 			'Rapid Deployment Settings', 
-	 			'Rapid Deployment', 
+	 			'Multi Deployment Settings', 
+	 			'Multi Deployment', 
 	 			'manage_options', 
-	 			'rapid-deploy-settings', 
+	 			'multi-deploy-settings', 
 	 			array('Multi_Deployment', 'settings_view') 
 	 		);
 	 	}
 
 	 	static function save_options(){
 
-	 		if( ! empty($_POST) && isset( $_POST['_rapid_deployment_nonce'] ) ){
-	 			if( ! wp_verify_nonce( $_POST['_rapid_deployment_nonce'], 'save_settings' ) ){
+	 		if( ! empty($_POST) && isset( $_POST['_multi_deployment_nonce'] ) ){
+	 			if( ! wp_verify_nonce( $_POST['_multi_deployment_nonce'], 'save_settings' ) ){
 	 				print 'Nonce did not verify.';
    					exit;
 	 			}
@@ -134,9 +137,32 @@
 	 	}
 
 	 	static function save_options_notice(){
+
+	 		if( ! isset( $_POST['_multi_deployment_nonce'] )){
+	 			return;
+	 		}
+
 		    echo '<div class="updated">
 		       <p>Configuration saved.</p>
 		    </div>';
+		}
+
+		static function installed_notice(){
+
+	 		if( get_option('deployment_activated') ){
+	 			return;
+	 		}
+
+		    echo '<div class="updated">
+		       <p>Configure your different Wordpress environments 
+		       	<a href="' . admin_url( self :: $form_action ) . '">here</a>.</p>
+		    </div>';
+
+		    add_option( 'deployment_activated', 1 );
+		}
+
+		static function on_uninstall(){
+			delete_option( 'deployment_activated' );
 		}
 
 	 }
